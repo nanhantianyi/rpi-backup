@@ -18,8 +18,6 @@ echo "create $file ..."
 
 sudo dd if=/dev/zero of=$file bs=1K count=$df
 
-sudo parted $file --script -- mklabel msdos
-
 start=`sudo fdisk -l /dev/mmcblk0| awk 'NR==9 {print $2}'`
 end=`sudo fdisk -l /dev/mmcblk0| awk 'NR==9 {print $3}'`
 
@@ -38,6 +36,7 @@ echo "start=$start"
 echo "end=$end"
 echo "end2=$end2"
 
+sudo parted $file --script -- mklabel msdos
 sudo parted $file --script -- mkpart primary fat32 $start $end
 sudo parted $file --script -- mkpart primary ext4 $end2 -1
 
