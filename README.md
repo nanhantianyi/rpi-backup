@@ -2,10 +2,10 @@
 
 树莓派系统备份脚本 
 
-1、back.sh（备份脚本） 
+1、back.sh（备份脚本，需要root权限） 
    用法：./back.sh xxx.img  (xxx.img为备份文件名，自行修改)
    
-2、resize.sh（扩容脚本） 
+2、resize.sh（扩容脚本，需要root权限） 
    用法：恢复系统后执行 ./resize.sh 扩容root分区，也可以用树莓派raspi-config进行扩容
    
 3、参考资料  
