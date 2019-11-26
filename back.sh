@@ -72,6 +72,8 @@ sudo cp -rfp /boot/* /media/
 
 sudo sed -i "s/$opartuuidr/$npartuuidr/g" /media/cmdline.txt
 
+sync
+
 sudo umount /media
 
 sudo mount -t ext4 $partRoot /media
@@ -89,6 +91,7 @@ cd /media
 sudo rsync --force -rltWDEgop --delete --stats --progress \
     $EXCLUDE_SWAPFILE \
     --exclude ".gvfs" \
+    --exclude "/boot" \
     --exclude "/dev" \
     --exclude "/media" \
     --exclude "/mnt" \
@@ -100,7 +103,7 @@ sudo rsync --force -rltWDEgop --delete --stats --progress \
     --exclude "$file" \
     / ./
 
-for i in dev media mnt proc run sys boot; do
+for i in boot dev media mnt proc run sys boot; do
     if [ ! -d /media/$i ]; then
         sudo mkdir /media/$i
     fi
@@ -115,6 +118,8 @@ cd
 
 sudo sed -i "s/$opartuuidb/$npartuuidb/g" /media/etc/fstab
 sudo sed -i "s/$opartuuidr/$npartuuidr/g" /media/etc/fstab
+
+sync
 
 sudo umount /media
 
