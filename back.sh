@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install -y dosfstools parted kpartx rsync
+sudo apt install -y dosfstools parted kpartx rsync
 
 echo ""
 echo "software is ready"
@@ -10,13 +10,14 @@ if [ "x$1" != "x" ];then
     file="$1"
 fi
 
-df=`df -P | grep /dev/root | awk '{print $3}'`
-dr=`df -P | grep /dev/mmcblk0p1 | awk '{print $2}'`
-df=`echo $df $dr |awk '{print int(($1+$2)*1.2)}'`
+dr=`df -P | grep /dev/root | awk '{print $3}'`
+db=`df -P | grep /dev/mmcblk0p1 | awk '{print $2}'`
+ds=`echo $dr $db |awk '{print int(($1+$2)*1.2)}'`
 
 echo "create $file ..."
 
-sudo dd if=/dev/zero of=$file bs=1K count=$df
+sudo dd if=/dev/zero of=$file bs=1K count=0 seek=$ds
+#sudo truncate -s ${ds}k $file
 
 start=`sudo fdisk -l /dev/mmcblk0| awk 'NR==9 {print $2}'`
 end=`sudo fdisk -l /dev/mmcblk0| awk 'NR==9 {print $3}'`
@@ -67,16 +68,16 @@ echo "$partBoot format success"
 sudo mkfs.ext4 $partRoot
 echo "$partRoot format success"
 
-sudo mount -t vfat $partBoot /media
-sudo cp -rfp /boot/* /media/
+sudo mount -t vfat $partBoot /mnt
+sudo cp -rfp /boot/* /mnt/
 
-sudo sed -i "s/$opartuuidr/$npartuuidr/g" /media/cmdline.txt
+sudo sed -i "s/$opartuuidr/$npartuuidr/g" /mnt/cmdline.txt
 
 sync
 
-sudo umount /media
+sudo umount /mnt
 
-sudo mount -t ext4 $partRoot /media
+sudo mount -t ext4 $partRoot /mnt
 
 if [ -f /etc/dphys-swapfile ]; then
     SWAPFILE=`cat /etc/dphys-swapfile | grep ^CONF_SWAPFILE | cut -f 2 -d=`
@@ -86,7 +87,7 @@ if [ -f /etc/dphys-swapfile ]; then
     EXCLUDE_SWAPFILE="--exclude $SWAPFILE"
 fi
 
-cd /media
+cd /mnt
 
 sudo rsync --force -rltWDEgop --delete --stats --progress \
     $EXCLUDE_SWAPFILE \
@@ -104,24 +105,24 @@ sudo rsync --force -rltWDEgop --delete --stats --progress \
     / ./
 
 for i in boot dev media mnt proc run sys boot; do
-    if [ ! -d /media/$i ]; then
-        sudo mkdir /media/$i
+    if [ ! -d /mnt/$i ]; then
+        sudo mkdir /mnt/$i
     fi
 done
 
-if [ ! -d /media/tmp ]; then
-    sudo mkdir /media/tmp
-    sudo chmod a+w /media/tmp
+if [ ! -d /mnt/tmp ]; then
+    sudo mkdir /mnt/tmp
+    sudo chmod a+w /mnt/tmp
 fi
 
 cd
 
-sudo sed -i "s/$opartuuidb/$npartuuidb/g" /media/etc/fstab
-sudo sed -i "s/$opartuuidr/$npartuuidr/g" /media/etc/fstab
+sudo sed -i "s/$opartuuidb/$npartuuidb/g" /mnt/etc/fstab
+sudo sed -i "s/$opartuuidr/$npartuuidr/g" /mnt/etc/fstab
 
 sync
 
-sudo umount /media
+sudo umount /mnt
 
 sudo kpartx -d $loopdevice
 sudo losetup -d $loopdevice
