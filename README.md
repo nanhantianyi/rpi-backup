@@ -8,7 +8,9 @@
    
    2、ubuntu-20.04-preinstalled-server-arm64 (成功)
    
-   3、2019-12-30-OPENFANS-Debian-Buster-Aarch64-ext4-v2019-2.0-U2-Release-plus++.img (成功)
+   3、ubuntu-18.04-desktop-arm64 (成功)
+   
+   4、2019-12-30-OPENFANS-Debian-Buster-Aarch64-ext4-v2019-2.0-U2-Release-plus++ (成功)
    
 ## 二、back.sh（备份脚本，需要root权限） 
 
