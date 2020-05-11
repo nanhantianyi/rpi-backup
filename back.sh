@@ -6,6 +6,7 @@ if [ `whoami` != "root" ];then
 fi
 
 # install software
+apt update
 apt install -y dosfstools parted kpartx rsync
 
 echo ""
