@@ -125,6 +125,7 @@ rsync --force -rltWDEgop --delete --stats --progress \
     --exclude=/home/*/.gvfs \
     --exclude=/home/*/.cache \
     --exclude=/home/*/.local/share/Trash \
+    --exclude=/home/*/.ros \
     --exclude "lost\+found" \
     --exclude "$file" \
     / ./
